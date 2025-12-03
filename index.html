@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Con nhớ ba r</title>
+  <style>
+    /* Background image placeholder: replace IMAGE_BASE64 with your base64 image */
+    body{
+      background: url('IMAGE_BASE64') center/cover no-repeat fixed,
+                  radial-gradient(800px 500px at 10% 10%, rgba(124,58,237,0.3), transparent),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:#e6eef8;display:flex;align-items:center;justify-content:center;padding:28px;
+      animation:bgMove 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgMove{
+      0%{background-position:center 0px}
+      100%{background-position:center -40px}
+    }
+    :root{--bg1:#0f172a;--bg2:#071029;--accent:#7c3aed;--muted:#94a3b8}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
+    body{background:radial-gradient(800px 500px at 10% 10%, rgba(124,58,237,0.08), transparent),linear-gradient(180deg,var(--bg1),var(--bg2));color:#e6eef8;display:flex;align-items:center;justify-content:center;padding:28px}
+    .card{width:min(920px,95%);background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));border-radius:16px;padding:34px;box-shadow:0 10px 40px rgba(2,6,23,0.6);position:relative;overflow:hidden}
+    h1{font-size:40px;margin:0 0 6px}
+    p.lead{color:var(--muted);margin:0 0 18px}
+
+    .question{font-weight:700;font-size:22px;margin:18px 0}
+
+    .options{display:flex;gap:14px}
+    .option{flex:1;padding:18px;border-radius:12px;border:2px dashed rgba(230,238,248,0.06);text-align:center;font-weight:800;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,background .18s ease}
+    .option:hover{transform:translateY(-6px)}
+    .option.selected{background:linear-gradient(90deg,var(--accent),#06b6d4);color:#021025;border:none;box-shadow:0 10px 30px rgba(12,10,40,0.45)}
+
+    .muted{color:var(--muted);font-weight:600}
+
+    .controls{margin-top:20px;display:flex;gap:10px;align-items:center}
+    .btn{background:linear-gradient(90deg,var(--accent),#06b6d4);border:none;padding:10px 14px;border-radius:10px;font-weight:700;color:white;cursor:pointer}
+
+    footer{position:absolute;left:0;right:0;bottom:10px;text-align:center;color:rgba(230,238,248,0.45);font-weight:600}
+
+    .confetti{position:fixed;pointer-events:none;z-index:9999}
+    .tear{position:fixed;pointer-events:none;z-index:9999;width:8px;height:12px;border-radius:50%;background:rgba(180,220,255,0.9)}
+  </style>
+</head>
+<body>
+  <div class="card" role="main">
+    <h1>Con nhớ ba r 💭</h1>
+    <p class="lead">Chọn câu trả lời của ba nè.</p>
+
+    <div class="question">Ba có yêu con hông?</div>
+
+    <div class="options" role="radiogroup" aria-label="Ba có yêu con hông">
+      <div class="option" role="radio" tabindex="0" aria-checked="false" data-value="co" id="opt-co">Có</div>
+      <div class="option" role="radio" tabindex="0" aria-checked="false" data-value="khong" id="opt-khong">Không</div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="confirm">Xác nhận</button>
+      <div class="muted" id="resultText">Chưa chọn câu trả lời.</div>
+      <label style="margin-left:auto;color:var(--muted);font-weight:600">Class: <span style="color:#fff;margin-left:6px">10cê1</span></label>
+    </div>
+
+    <footer>by Hùng 10cê1</footer>
+  </div>
+
+  <script>
+    const optCo = document.getElementById('opt-co');
+    const optKh = document.getElementById('opt-khong');
+    const resultText = document.getElementById('resultText');
+    let selected = null;
+
+    function selectOption(el){
+      if(selected) { selected.classList.remove('selected'); selected.setAttribute('aria-checked','false'); }
+      selected = el;
+      el.classList.add('selected');
+      el.setAttribute('aria-checked','true');
+      resultText.textContent = 'Bạn đã chọn: ' + (el.dataset.value === 'co' ? 'Có' : 'Không');
+    }
+
+    [optCo,optKh].forEach(el=>{
+      el.addEventListener('click', ()=>selectOption(el));
+      el.addEventListener('keyup', (e)=>{ if(e.key==='Enter' || e.key===' ') selectOption(el); });
+    });
+
+    document.getElementById('confirm').addEventListener('click', ()=>{
+      if(!selected){ resultText.textContent = 'Hãy chọn 1 ô trước đã nha.'; return; }
+      if(selected.dataset.value === 'co'){
+        resultText.textContent = 'Ba yêu con nhiều lắm 💖';
+        launchConfetti();
+      } else {
+        resultText.textContent = 'Buồn ghê... nhưng con vẫn thương ba 🤍';
+        launchTears();
+      }
+    });
+
+    function launchConfetti(){
+      const colors=['#f43f5e','#fb923c','#facc15','#10b981','#60a5fa','#a78bfa'];
+      for(let i=0;i<40;i++){
+        const el=document.createElement('div');
+        el.className='confetti';
+        el.style.left=(Math.random()*window.innerWidth)+'px';
+        el.style.top='-10px';
+        el.style.width=(6+Math.random()*8)+'px';
+        el.style.height=(10+Math.random()*10)+'px';
+        el.style.background=colors[Math.floor(Math.random()*colors.length)];
+        document.body.appendChild(el);
+        const dx=(Math.random()*800-400);
+        const dy=(window.innerHeight*0.6 + Math.random()*200);
+        el.animate([
+          {transform:'translateY(0) rotate(0)', opacity:1},
+          {transform:`translate(${dx}px, ${dy}px) rotate(${dx>0?360:-360}deg)`, opacity:0}
+        ],{duration:1400+Math.random()*800,easing:'cubic-bezier(.2,.6,.2,1)'});
+        setTimeout(()=>el.remove(),2200);
+      }
+    }
+
+    function launchTears(){
+      for(let i=0;i<18;i++){
+        const t=document.createElement('div');
+        t.className='tear';
+        const startX = (window.innerWidth/2) + (Math.random()*240-120);
+        t.style.left = startX + 'px';
+        t.style.top = '120px';
+        document.body.appendChild(t);
+        const dx = (Math.random()*120-60);
+        const dy = 380 + Math.random()*200;
+        t.animate([
+          {transform:'translateY(0) scale(1)', opacity:1},
+          {transform:`translate(${dx}px, ${dy}px) scale(.6)`, opacity:0}
+        ],{duration:1200+Math.random()*800,easing:'cubic-bezier(.2,.6,.2,1)'});
+        setTimeout(()=>t.remove(),2000);
+      }
+    }
+  </script>
+</body>
+</html>
